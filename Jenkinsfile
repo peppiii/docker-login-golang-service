@@ -1,20 +1,19 @@
 pipeline {
-    agent {
-        node {
-            label 'master'
-        }
-    }
+    agent any 
+    
     environment {
         SERVICE = 'testing-golang'
     }
     stages {
         stage('Checkout') {
             when {
-                anyOf { branch 'master';}
-            }
+                           branch 'master'
+                            }
+
             steps {
                 echo 'Checking out from Git'
                 checkout scm
             }
         }
     }
+}
