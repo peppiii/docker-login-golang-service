@@ -1,36 +1,50 @@
-node {
-    def app
-
-    stage('Clone repository') {
-        /* Let's make sure we have the repository cloned to our workspace */
-
-        checkout scm
-    }
-
-    stage('Build image') {
-        /* This builds the actual image; synonymous to
-         * docker build on the command line */
-
-        app = docker.build("getintodevops/hellonode")
-    }
-
-    stage('Test image') {
-        /* Ideally, we would run a test framework against our image.
-         * For this example, we're using a Volkswagen-type approach ;-) */
-
-        app.inside {
-            sh 'echo "Tests passed"'
+pipeline {
+    agent {
+        node {
+            label 'master'
         }
     }
-
-    stage('Push image') {
-        /* Finally, we'll push the image with two tags:
-         * First, the incremental build number from Jenkins
-         * Second, the 'latest' tag.
-         * Pushing multiple tags is cheap, as all the layers are reused. */
-        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
+    environment {
+        SERVICE = 'testing-golang'
+    }
+    stages {
+        stage('Checkout') {
+            when {
+                anyOf { branch 'master'; }
+            }
+            steps {
+                echo 'Checking out from Git'
+                checkout scm
+            }
+        }
+        stage('Build') {
+            parallel {
+                stage('Code review') {
+                    environment {
+                        scannerHome = tool 'sonarQubeScanner'
+                    }
+                    when {
+                        branch 'master'
+                    }
+                    steps {
+                        withSonarQubeEnv('sonarQube') {
+                            sh "${scannerHome}/bin/sonar-scanner"
+                        }
+                        timeout(time: 5, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: true
+                        }
+                    }
+                }
+                    post {
+                       success {
+                           slackSend color: '#00FF00', message: "Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} SUCCESS (<${env.BUILD_URL}|Open>)"
+                       }
+                       failure {
+                           slackSend color: '#FF0000', message: "Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} FAILED (<${env.BUILD_URL}|Open>)"
+                       }
+                    }
+                }
+            }
         }
     }
 }
