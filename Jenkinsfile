@@ -6,10 +6,9 @@ pipeline {
     }
     stages {
         stage('Checkout') {
-            when {
-                                branch 'master'
-                            }
-
+             when {
+                anyOf { branch 'master'; branch 'develop'; branch 'staging' }
+            }
             steps {
                 echo 'Checking out from Git'
                 checkout scm
