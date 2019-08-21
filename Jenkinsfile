@@ -16,6 +16,7 @@ pipeline {
             }
         }
         stage('Build') {
+            parallel {
                 stage('Code review') {
                     environment {
                         scannerHome = tool 'sonarQubeScanner'
@@ -31,6 +32,7 @@ pipeline {
                             waitForQualityGate abortPipeline: true
                         }
                     }
+                }
             }
         }
     }
