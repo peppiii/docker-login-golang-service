@@ -77,15 +77,6 @@ pipeline {
       }
     }
 
-    stage('Approval Staging') {
-      when {
-        branch 'staging'
-      }
-      steps {
-        input 'Approval Staging'
-      }
-    }
-
     stage('Build Application') {
       when {
         anyOf {
@@ -119,6 +110,15 @@ pipeline {
       }
       steps {
         input 'deploy to argocd'
+      }
+    }
+
+    stage('Approval Staging') {
+      when {
+        branch 'staging'
+      }
+      steps {
+        input 'Approval Staging'
       }
     }
 
