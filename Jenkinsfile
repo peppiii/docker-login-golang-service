@@ -15,25 +15,6 @@ pipeline {
         checkout scm
       }
     }
-    stage('Code Review') {
-            parallel {
-                stage('Code review') {
-                    environment {
-                        scannerHome = tool 'sonarQubeScanner'
-                    }
-                    when {
-                        branch 'develop'
-                    }
-                    steps {
-                        withSonarQubeEnv('sonarQube') {
-                            sh "${scannerHome}/bin/sonar-scanner"
-                        }
-                        timeout(time: 5, unit: 'MINUTES') {
-                            waitForQualityGate abortPipeline: true
-                        }
-                    }
-                }
-
    stage('Approval Code Review') {
       when {
         branch 'develop'
