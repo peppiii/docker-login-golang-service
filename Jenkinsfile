@@ -8,12 +8,14 @@ pipeline {
           branch 'develop'
           branch 'staging'
         }
+
       }
       steps {
         echo 'Checking out from Git'
         checkout scm
       }
     }
+
     stage('build') {
       when {
         branch 'master'
@@ -22,6 +24,7 @@ pipeline {
         echo 'build docker'
       }
     }
+
     stage('nexus') {
       when {
         branch 'master'
@@ -30,6 +33,7 @@ pipeline {
         echo 'post build to nexus'
       }
     }
+
     stage('Approval') {
       when {
         branch 'master'
@@ -38,6 +42,7 @@ pipeline {
         input 'deploy to argocd'
       }
     }
+
     stage('deploy to argocd') {
       when {
         branch 'master'
@@ -46,6 +51,7 @@ pipeline {
         echo 'deploy to argocd'
       }
     }
+
   }
   environment {
     SERVICE = 'testing-golang'
