@@ -33,6 +33,7 @@ pipeline {
                         }
                     }
                 }
+            }
 
    stage('Approval Code Review') {
       when {
