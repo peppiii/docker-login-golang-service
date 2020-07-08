@@ -134,14 +134,6 @@ pipeline {
         echo 'deploy to argocd'
       }
     }
-    post {
-          success {
-            slackSend color: '#00FF00', message: "Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} SUCCESS (<${env.BUILD_URL}|Open>)"
-          }
-          failure {
-            slackSend color: '#FF0000', message: "Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} FAILED (<${env.BUILD_URL}|Open>)"
-          }
-        }
   }
   environment {
     SERVICE = 'testing-golang'
