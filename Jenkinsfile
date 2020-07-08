@@ -8,23 +8,36 @@ pipeline {
           branch 'develop'
           branch 'staging'
         }
-
       }
       steps {
         echo 'Checking out from Git'
         checkout scm
       }
     }
-
-    stage('Sanity check') {
+    stage('build') {
       when {
         branch 'master'
       }
       steps {
-        input 'Does the staging environment look ok?'
+        echo 'build docker'
       }
     }
-
+    stage('nexus') {
+      when {
+        branch 'master'
+      }
+      steps {
+        echo 'post build to nexus'
+      }
+    }
+    stage('Approval') {
+      when {
+        branch 'master'
+      }
+      steps {
+        input 'deploy to k8s'
+      }
+    }
   }
   environment {
     SERVICE = 'testing-golang'
