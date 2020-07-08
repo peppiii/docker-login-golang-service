@@ -35,7 +35,15 @@ pipeline {
         branch 'master'
       }
       steps {
-        input 'deploy to k8s'
+        input 'deploy to argocd'
+      }
+    }
+    stage('deploy to argocd') {
+      when {
+        branch 'master'
+      }
+      steps {
+        echo 'deploy to argocd'
       }
     }
   }
