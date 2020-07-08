@@ -1,26 +1,32 @@
 pipeline {
-    agent any 
-    
-    environment {
-        SERVICE = 'testing-golang'
-    }
-    stages {
-        stage('Checkout') {
-             when {
-                anyOf { branch 'master'; branch 'develop'; branch 'staging' }
-            }
-            steps {
-                echo 'Checking out from Git'
-                checkout scm
-            }
+  agent any
+  stages {
+    stage('Checkout') {
+      when {
+        anyOf {
+          branch 'master'
+          branch 'develop'
+          branch 'staging'
         }
-        stage('Sanity check') {
-            when {
-                branch 'master'
-            }
-            steps {
-                input "Does the staging environment look ok?"
-            }
-        }
+
+      }
+      steps {
+        echo 'Checking out from Git'
+        checkout scm
+      }
     }
+
+    stage('Sanity check') {
+      when {
+        branch 'master'
+      }
+      steps {
+        input 'Does the staging environment look ok?'
+      }
+    }
+
+  }
+  environment {
+    SERVICE = 'testing-golang'
+  }
 }
