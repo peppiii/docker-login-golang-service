@@ -15,6 +15,7 @@ pipeline {
         checkout scm
       }
     }
+
     stage('build application') {
       when {
         anyOf {
@@ -68,6 +69,7 @@ pipeline {
           branch 'develop'
           branch 'staging'
         }
+
       }
       steps {
         input 'deploy to argocd'
@@ -81,11 +83,13 @@ pipeline {
           branch 'develop'
           branch 'staging'
         }
+
       }
       steps {
         echo 'deploy to argocd'
       }
     }
+
   }
   environment {
     SERVICE = 'testing-golang'
